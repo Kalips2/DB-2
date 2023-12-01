@@ -1,6 +1,6 @@
 CREATE TABLE "users"
 (
-    "UserID"        int PRIMARY KEY,
+    "id"        SERIAL PRIMARY KEY,
     "Role"          varchar,
     "FirstName"     varchar,
     "LastName"      varchar,
@@ -25,7 +25,7 @@ alter table favorite_centers
 
 CREATE TABLE "user_restrictions"
 (
-    "RestrictionID" int PRIMARY KEY,
+    "RestrictionID" SERIAL PRIMARY KEY,
     "UserID"        int,
     "Reason"        text,
     "ExpiryDate"    date
@@ -36,7 +36,7 @@ alter table user_restrictions
 
 CREATE TABLE "user_documents"
 (
-    "documentID"  int PRIMARY KEY,
+    "documentID"  SERIAL PRIMARY KEY,
     "UserID"      int,
     "Description" text,
     "File"        varchar
@@ -47,7 +47,7 @@ alter table user_documents
 
 CREATE TABLE "blood_centers"
 (
-    "CenterId"      int PRIMARY KEY,
+    "CenterId"      SERIAL PRIMARY KEY,
     "Name"          varchar,
     "Location"      varchar,
     "ContactNumber" varchar,
@@ -61,16 +61,16 @@ alter table blood_centers
 CREATE UNIQUE INDEX ON "favorite_centers" ("UserID", "BloodCenterId");
 
 ALTER TABLE "favorite_centers"
-    ADD FOREIGN KEY ("UserID") REFERENCES "users" ("UserID");
+    ADD FOREIGN KEY ("UserID") REFERENCES "users" ("id") ON DELETE CASCADE;
 
 ALTER TABLE "user_restrictions"
-    ADD FOREIGN KEY ("UserID") REFERENCES "users" ("UserID");
+    ADD FOREIGN KEY ("UserID") REFERENCES "users" ("id") ON DELETE CASCADE;
 
 ALTER TABLE "user_documents"
-    ADD FOREIGN KEY ("UserID") REFERENCES "users" ("UserID");
+    ADD FOREIGN KEY ("UserID") REFERENCES "users" ("id") ON DELETE CASCADE;
 
 ALTER TABLE "favorite_centers"
-    ADD FOREIGN KEY ("BloodCenterId") REFERENCES "blood_centers" ("CenterId");
+    ADD FOREIGN KEY ("BloodCenterId") REFERENCES "blood_centers" ("CenterId") ON DELETE CASCADE;
 
 
 

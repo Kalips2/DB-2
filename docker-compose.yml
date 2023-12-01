@@ -1,12 +1,27 @@
 version: '3'
 services:
   postgres:
+    container_name: postgres_blood
     image: postgres:latest
     environment:
       POSTGRES_DB: blood_donation
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: root
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
     ports:
       - "5432:5432"
     volumes:
-      - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql
+      -  postgres-data:/var/lib/postgresql/data
+      - ./postgres:/docker-entrypoint-initdb.d/
+
+  mongodb:
+    container_name: mongo_blood
+    image: mongo
+    volumes:
+      - mongodb-data:/data/db
+      - ./mongo:/docker-entrypoint-initdb.d/
+    ports:
+      - "27017:27017"
+
+volumes:
+  postgres-data:
+  mongodb-data:

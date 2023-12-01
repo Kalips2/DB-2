@@ -1,21 +1,27 @@
 package com.example.db2.configurations;
 
+import javax.sql.DataSource;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.datasource.init.DataSourceInitializer;
-import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
+import org.springframework.context.annotation.Primary;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 
 @Configuration
-public class Postgres {
+public class PostgresConfig {
+  @Primary
+  @Bean(name = "postgresDataSource")
+  @ConfigurationProperties(prefix = "spring.datasource")
+  public DataSource dataSource() {
+    return DataSourceBuilder.create().build();
+  }
 
-  @Bean
-  public DataSourceInitializer dataSourceInitializer(DataSource dataSource) {
-    DataSourceInitializer initializer = new DataSourceInitializer();
-    initializer.setDataSource(dataSource);
-    ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-    populator.addScript(new ClassPathResource("schema.sql")); // Припустимо, що ваша схема розташована в файлі schema.sql
-    initializer.setDatabasePopulator(populator);
-    return initializer;
+  @Primary
+  @Bean(name = "jdbcTemplate")
+  public JdbcTemplate jdbcTemplate(@Qualifier("postgresDataSource") DataSource dataSource) {
+    return new JdbcTemplate(dataSource);
   }
 }

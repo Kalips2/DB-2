@@ -1,13 +1,17 @@
 package com.example.db2.services;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserService {
+public class UserSqlService {
 
   @Autowired
   private JdbcTemplate jdbcTemplate;
@@ -49,7 +53,21 @@ public class UserService {
       jdbcTemplate.update("INSERT INTO user_restrictions (\"UserID\", \"Reason\", \"ExpiryDate\") VALUES (?, ?, ?)", userId, "Some reason", LocalDate.now().plusMonths(1));
     }
 
+    long endTime = System.currentTimeMillis();
+    return endTime - startTime;
+  }
 
+  public long addRestrictionsToUsers() {
+    long startTime = System.currentTimeMillis();
+
+    List<Integer> userIds = jdbcTemplate.queryForList("SELECT id FROM users", Integer.class);
+
+    // Додати нові рестрикції для кожного користувача
+    for (Integer userId : userIds) {
+      String sql = "INSERT INTO user_restrictions (\"UserID\", \"Reason\", \"ExpiryDate\") " +
+          "VALUES (?, ?, ?)";
+      jdbcTemplate.update(sql, userId, "New reason", LocalDate.now().plusMonths(1));
+    }
     long endTime = System.currentTimeMillis();
     return endTime - startTime;
   }
